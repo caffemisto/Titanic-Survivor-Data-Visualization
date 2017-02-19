@@ -4,8 +4,32 @@
     <meta charset="utf-8">    
     <script src="http://d3js.org/d3.v3.min.js"></script>
     <script src="http://dimplejs.org/dist/dimple.v2.0.0.min.js"></script>
-    
+  
+      <style>
+        h2 {
+          color: black;
+          text-align: center;
+        }
+
+        .axis {
+          font-family: arial;
+          font-size: 0.6em;
+        }
+
+        path {
+          fill: none;
+          stroke: black;
+          stroke-width: 2px;
+        }
+
+        .tick {
+          fill: none;
+          stroke: black;
+        }
+      </style>
+
     <script type="text/javascript">
+
       function draw(data) {
 
           "use strict";
@@ -25,6 +49,11 @@
             .key(function(d) { return d.Pclass; })
             .rollup(function(v) { return v.length;})
             .entries(data);
+
+          var class_max = d3.max(class_count, function(d) {
+              return d.values;
+          });
+
           debugger;
 
           //create the header title of the graphic
@@ -57,8 +86,8 @@
           //scale the passenger class data we have
           //using the extent we created
           var x_scale = d3.scale.ordinal()
-                                .domain(x_extent)
-                                .rangePoints([margin, width]);
+                                .domain(['1', '2', '3'])
+                                .rangeBands([margin, width]);
 
           //build the x axis with the appropriate scale
           var x_axis = d3.svg.axis()
@@ -74,9 +103,11 @@
 
           //determine the extent of data we will be using for
           //survival data
-          var y_extent = d3.extent(data, function(d) {
-              return d['Survived'];
-          });
+          var y_extent = d3.extent([0,class_max + 100]);
+
+          //(data, function(d) {
+          //    return d['Survived'];
+          //});
 
           //scale the survival data we have
           //using the extent we created
@@ -107,7 +138,7 @@
                   return y_scale(d['Survived']);
               })
               .attr('width', function(d) {
-                  return 500;
+                  return 50;
 
               })
               .attr('fill', function(d) {
