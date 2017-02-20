@@ -45,17 +45,16 @@
           //of data points in each passenger data class
           var class_count = d3.nest()
             .key(function(d) { return d.Pclass; })
-            .rollup(function(v) { return v.length;})
+            .rollup(function(v) {return {"total" : v.length,
+                                         "Survived" : d3.sum(v, 
+                                          function(d) {return d.Survived;}),
+                                         "Died" : v.length - d3.sum(v,
+                                          function(d) {return d.Survived;})
+                                        }
+                                })
             .entries(data);
           
-          //run a nesting function to count the total
-          //survivors in each class
-          var class_total = d3.nest()
-            .key(function(d) {return d.Pclass;})
-            .rollup(function(v) { return {
-               total: d3.sum(v, function(d) { return d.Survived; })
-             }; })
-            .entries(data);
+          debugger;
 
           //create the header title of the graphic
           d3.select("body")
@@ -80,7 +79,7 @@
           //using the extent we created
           var x_scale = d3.scale.ordinal()
                                 .domain(['1', '2', '3'])
-                                .rangeBands([margin, width], .2, .1);
+                                .rangeBands([margin, width], .4, .2);
 
           //build the x axis with the appropriate scale
           var x_axis = d3.svg.axis()
@@ -96,7 +95,7 @@
 
           //determine the maximum passenger count for any given class
           var class_max = d3.max(class_count, function(d) {
-              return d.values;
+              return d.values['total'];
           });
 
           //determine the extent of data we will be using for
@@ -125,17 +124,17 @@
           svg.append('g')
              .attr("class", "chart")
              .selectAll("rect")
-             .data(class_total)
+             .data(class_count)
              .enter()
              .append('rect')
              .attr('x', function(d) {
                   return x_scale(d.key);
               })
              .attr('y', function(d) {
-                  return y_scale(d.values['total']);
+                  return y_scale(d.values['Survived']);
               })
              .attr('height', function(d) {
-                  return height - y_scale(d.values['total']);
+                  return height - y_scale(d.values['Survived']);
               })
              .attr('width', function(d) {
                   return x_scale.rangeBand();
