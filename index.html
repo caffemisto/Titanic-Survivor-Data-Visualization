@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <html>
   <head>
     <meta charset="utf-8">    
@@ -30,19 +31,15 @@
 
     <script type="text/javascript">
 
+      //create function for drawing the chart
       function draw(data) {
 
+          //set the height, width, and margin size
           "use strict";
           var margin = 75,
               width = 1400 - margin,
               height = 600 - margin;
 
-          
-
-          //run a nesting function to sort the data by class
-          var data_by_class = d3.nest()
-            .key(function(d) { return d.Pclass; })
-            .entries(data);
 
           //run a nesting function to count the number
           //of data points in each passenger data class
@@ -51,18 +48,14 @@
             .rollup(function(v) { return v.length;})
             .entries(data);
           
+          //run a nesting function to count the total
+          //survivors in each class
           var class_total = d3.nest()
             .key(function(d) {return d.Pclass;})
             .rollup(function(v) { return {
                total: d3.sum(v, function(d) { return d.Survived; })
              }; })
             .entries(data);
-
-          var class_max = d3.max(class_count, function(d) {
-              return d.values;
-          });
-
-          debugger;
 
           //create the header title of the graphic
           d3.select("body")
@@ -76,10 +69,6 @@
             .attr("height", height + margin)
             .append('g')
             .attr('class', 'map');
-
-
-
-
 
           //determine the extent of data we will be using for
           //passenger class
@@ -105,13 +94,14 @@
              .attr('transform', "translate(0," + height + ")")
              .call(x_axis);
 
+          //determine the maximum passenger count for any given class
+          var class_max = d3.max(class_count, function(d) {
+              return d.values;
+          });
+
           //determine the extent of data we will be using for
           //survival data
           var y_extent = d3.extent([0,class_max + 100]);
-
-          //(data, function(d) {
-          //    return d['Survived'];
-          //});
 
           //scale the survival data we have
           //using the extent we created
@@ -119,13 +109,11 @@
                                 .range([height, margin])
                                 .domain(y_extent);
                                 
-
           //build the x axis with the appropriate scale
           var y_axis = d3.svg.axis()
                              .scale(y_scale)
                              .orient("left");
                              
-
           //append the y axis to the svg
           d3.select("svg")
             .append('g')
@@ -133,14 +121,7 @@
             .attr('transform', "translate(" + margin + ",0)")
             .call(y_axis);
  
-/*          //create the rectangle objects which will make up the bars 
-          //in this barchart
-          d3.select('svg')
-            .selectAll("rect")
-            .data(data)
-            .enter()
-            .append("rect"); */
-
+          //append the bars to the svg
           svg.append('g')
              .attr("class", "chart")
              .selectAll("rect")
@@ -161,28 +142,7 @@
               })
              .attr('fill', 'steelblue')
              .attr('stroke', 'black');
-              debugger; 
-
-
-/*          d3.selectAll('rect')
-              .attr('x', function(d) {
-                  return x_scale(d['Pclass']);
-              })
-              .data(class_total)
-              .attr('y', function(d) {
-                  return y_scale(d.values['total']);
-              })
-              .attr('height', function(d) {
-                  return y_scale(0);
-              })
-              .attr('width', function(d) {
-                  return 200;
-
-              })
-              .attr('fill', function(d) {
-                  return 'steelblue'
-              }); */
-              debugger;
+             
         };
     </script>      
   </head>
