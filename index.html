@@ -75,15 +75,9 @@
             .attr("width", width + margin)
             .attr("height", height + margin)
             .append('g')
-            .attr('class','chart');
+            .attr('class', 'map');
 
-          //create the rectangle objects which will make up the bars 
-          //in this barchart
-          d3.select('svg')
-            .selectAll("rect")
-            .data(data)
-            .enter()
-            .append("rect");
+
 
 
 
@@ -97,12 +91,12 @@
           //using the extent we created
           var x_scale = d3.scale.ordinal()
                                 .domain(['1', '2', '3'])
-                                .rangeBands([margin, width]);
+                                .rangeBands([margin, width], .2, .1);
 
           //build the x axis with the appropriate scale
           var x_axis = d3.svg.axis()
                              .scale(x_scale)
-                             .orient("bottom");
+                             .orient('bottom');
           
           //append the x axis to the svg
           d3.select("svg")
@@ -138,11 +132,39 @@
             .attr('class', 'y axis')
             .attr('transform', "translate(" + margin + ",0)")
             .call(y_axis);
+ 
+/*          //create the rectangle objects which will make up the bars 
+          //in this barchart
+          d3.select('svg')
+            .selectAll("rect")
+            .data(data)
+            .enter()
+            .append("rect"); */
+
+          svg.append('g')
+             .attr("class", "chart")
+             .selectAll("rect")
+             .data(class_total)
+             .enter()
+             .append('rect')
+             .attr('x', function(d) {
+                  return x_scale(d.key);
+              })
+             .attr('y', function(d) {
+                  return y_scale(d.values['total']);
+              })
+             .attr('height', function(d) {
+                  return height - y_scale(d.values['total']);
+              })
+             .attr('width', function(d) {
+                  return x_scale.rangeBand();
+              })
+             .attr('fill', 'steelblue')
+             .attr('stroke', 'black');
+              debugger; 
 
 
-          
-
-          d3.selectAll('rect')
+/*          d3.selectAll('rect')
               .attr('x', function(d) {
                   return x_scale(d['Pclass']);
               })
@@ -159,7 +181,7 @@
               })
               .attr('fill', function(d) {
                   return 'steelblue'
-              });
+              }); */
               debugger;
         };
     </script>      
