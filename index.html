@@ -37,6 +37,7 @@
               width = 1400 - margin,
               height = 600 - margin;
 
+          
 
           //run a nesting function to sort the data by class
           var data_by_class = d3.nest()
@@ -48,6 +49,13 @@
           var class_count = d3.nest()
             .key(function(d) { return d.Pclass; })
             .rollup(function(v) { return v.length;})
+            .entries(data);
+          
+          var class_total = d3.nest()
+            .key(function(d) {return d.Pclass;})
+            .rollup(function(v) { return {
+               total: d3.sum(v, function(d) { return d.Survived; })
+             }; })
             .entries(data);
 
           var class_max = d3.max(class_count, function(d) {
@@ -68,7 +76,7 @@
             .attr("height", height + margin)
             .append('g')
             .attr('class','chart');
-        
+
           //create the rectangle objects which will make up the bars 
           //in this barchart
           d3.select('svg')
@@ -76,6 +84,8 @@
             .data(data)
             .enter()
             .append("rect");
+
+
 
           //determine the extent of data we will be using for
           //passenger class
@@ -112,13 +122,15 @@
           //scale the survival data we have
           //using the extent we created
           var y_scale = d3.scale.linear()
-                                .domain(y_extent)
-                                .range([height, margin]);
+                                .range([height, margin])
+                                .domain(y_extent);
+                                
 
           //build the x axis with the appropriate scale
           var y_axis = d3.svg.axis()
                              .scale(y_scale)
                              .orient("left");
+                             
 
           //append the y axis to the svg
           d3.select("svg")
@@ -127,24 +139,28 @@
             .attr('transform', "translate(" + margin + ",0)")
             .call(y_axis);
 
+
+          
+
           d3.selectAll('rect')
               .attr('x', function(d) {
                   return x_scale(d['Pclass']);
               })
+              .data(class_total)
               .attr('y', function(d) {
-                  return y_scale(d['Survived']);
+                  return y_scale(d.values['total']);
               })
               .attr('height', function(d) {
-                  return y_scale(d['Survived']);
+                  return y_scale(0);
               })
               .attr('width', function(d) {
-                  return 50;
+                  return 200;
 
               })
               .attr('fill', function(d) {
                   return 'steelblue'
               });
-
+              debugger;
         };
     </script>      
   </head>
