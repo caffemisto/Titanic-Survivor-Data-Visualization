@@ -9,23 +9,22 @@
         h2 {
           color: black;
           text-align: center;
+          font-family: arial;
         }
-
         .axis {
           font-family: arial;
           font-size: 0.6em;
         }
-
         path {
           fill: none;
           stroke: black;
           stroke-width: 2px;
         }
 
-        .tick {
-          fill: none;
-          stroke: black;
+        .legend {
+          font-family: arial;
         }
+
       </style>
 
     <script type="text/javascript">
@@ -58,7 +57,7 @@
           //create the header title of the graphic
           d3.select("body")
             .append("h2")
-            .text("Mortality of Titanic Passengers");
+            .text("Mortality of Titanic Passengers by Passenger Class");
 
           //create the svg in which the graphic will appear
           var svg = d3.select("body")
@@ -74,15 +73,18 @@
               return d['Pclass'];
           });
 
+          var tickLabels = ['1st Class', '2nd Class', '3rd Class']
+
           //scale the passenger class data we have
           //using the extent we created
           var x_scale = d3.scale.ordinal()
-                                .domain(['1', '2', '3'])
+                                .domain(['1','2','3'])
                                 .rangeBands([margin, width], .4, .2);
 
           //build the x axis with the appropriate scale
           var x_axis = d3.svg.axis()
                              .scale(x_scale)
+
                              .orient('bottom');
           
           //append the x axis to the svg
@@ -160,8 +162,39 @@
              .attr('width', function(d) {
                   return x_scale.rangeBand();
               })
-             .attr('fill', 'steelblue')
+             .attr('fill', 'lightblue')
              .attr('stroke', 'black');
+
+            var legend = svg.append("g")
+              .attr("class", "legend")
+              .attr("transform", "translate(" + (width - 300) + "," + 20 + ")")
+              .selectAll("g")
+              .data(["Deceased", "Survivors"])
+              .enter().append("g");
+
+            legend.append("rect")
+              .attr("y", function(d, i) {
+                  return i * 30;
+              })
+              .attr("width", 20)
+              .attr("height", 20)
+              .attr("fill", function(d) {
+                  if (d == "Deceased") {
+                      return 'lightblue';
+                  } else {
+                      return 'steelblue';
+                  }
+              })
+              .attr('stroke', 'black');
+
+            legend.append("text")
+              .attr("y", function(d, i) {
+                  return i * 30 + 15;
+              })
+              .attr("x", 35)
+              .text(function(d) {
+                  return d;
+              });
         };
     </script>      
   </head>
