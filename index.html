@@ -48,7 +48,13 @@
           //run a nesting function to count the number
           //of data points in each passenger data class
           var class_count = d3.nest()
-            .key(function(d) { return d.Pclass; })
+            .key(function(d) { if (d.Pclass == "1") {
+                                 return '1st Class';
+                               } else if (d.Pclass == "2"){
+                                   return '2nd Class';
+                               } else {
+                                   return '3rd Class';
+                               }})
             .rollup(function(v) {return {"total" : v.length,
                                          "Survived" : d3.sum(v, 
                                           function(d) {return d.Survived;}),
@@ -76,11 +82,10 @@
           var x_extent = d3.extent(data, function(d) {
               return d['Pclass'];
           });
-          var tickLabels = ['1st Class', '2nd Class', '3rd Class']
           //scale the passenger class data we have
           //using the extent we created
           var x_scale = d3.scale.ordinal()
-                                .domain(['1','2','3'])
+                                .domain(['1st Class','2nd Class','3rd Class'])
                                 .rangeBands([margin, width], .4, .2);
           //build the x axis with the appropriate scale
           var x_axis = d3.svg.axis()
@@ -203,7 +208,7 @@
               .attr("class", "legend")
               .attr("transform", "translate(" + (width - 300) + "," + 20 + ")")
               .selectAll("g")
-              .data(["Deceased", "Survivors"])
+              .data(["Deaths", "Survivors"])
               .enter().append("g");
             legend.append("rect")
               .attr("y", function(d, i) {
@@ -212,7 +217,7 @@
               .attr("width", 20)
               .attr("height", 20)
               .attr("fill", function(d) {
-                  if (d == "Deceased") {
+                  if (d == "Deaths") {
                       return 'lightblue';
                   } else {
                       return 'steelblue';
