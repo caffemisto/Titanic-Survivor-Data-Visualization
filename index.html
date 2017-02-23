@@ -4,22 +4,25 @@
     <meta charset="utf-8">    
     <script src="http://d3js.org/d3.v3.min.js"></script>
     <script src="http://dimplejs.org/dist/dimple.v2.0.0.min.js"></script>
-  
       <style>
+        /* set style for the header */
         h2 {
           color: black;
           text-align: center;
           font-family: arial;
         }
+        /* set style for the axis text */
         .axis {
           font-family: arial;
           font-size: 0.6em;
         }
+        /* set style for the axes */
         path {
           fill: none;
           stroke: black;
           stroke-width: 2px;
         }
+        /* set style for the tooltips */
         .toolTip {
           position: absolute;
           display: none;
@@ -32,11 +35,11 @@
           font-family: arial;
           font-size: 0.7em
         }
+        /* set style for the legend */
         .legend {
           font-family: arial;
         }
       </style>
-
     <script type="text/javascript">
       //create function for drawing the chart
       function draw(data) {
@@ -47,6 +50,7 @@
               height = 600 - margin;
           //run a nesting function to count the number
           //of data points in each passenger data class
+          //as well as total survivors and casualties
           var class_count = d3.nest()
             .key(function(d) { if (d.Pclass == "1") {
                                  return '1st Class';
@@ -63,8 +67,6 @@
                                         }
                                 })
             .entries(data);
-          
-          debugger;
           //create the header title of the graphic
           d3.select("body")
             .append("h2")
@@ -76,7 +78,6 @@
             .attr("height", height + margin)
             .append('g')
             .attr('class', 'map');
-          
           //determine the extent of data we will be using for
           //passenger class
           var x_extent = d3.extent(data, function(d) {
@@ -91,7 +92,6 @@
           var x_axis = d3.svg.axis()
                              .scale(x_scale)
                              .orient('bottom');
-          
           //append the x axis to the svg
           d3.select("svg")
              .append("g")
@@ -114,15 +114,14 @@
           //build the x axis with the appropriate scale
           var y_axis = d3.svg.axis()
                              .scale(y_scale)
-                             .orient("left");
-                             
+                             .orient("left");                   
           //append the y axis to the svg
           d3.select("svg")
             .append('g')
             .attr('class', 'y axis')
             .attr('transform', "translate(" + margin + ",0)")
             .call(y_axis);
- 
+          //create the tooltip variable
           var tooltip = d3.select("body").append("div").attr("class", "toolTip");
           //append the Survivor bars to the svg
           svg.append('g')
@@ -131,6 +130,7 @@
              .data(class_count)
              .enter()
              .append('rect')
+             //set the attributes of the bars
              .attr('x', function(d) {
                   return x_scale(d.key);
               })
@@ -145,6 +145,7 @@
               })
              .attr('fill', 'steelblue')
              .attr('stroke', 'black')
+             //set the mouseover functions of the bars
              .on("mouseover", function() {
                  d3.select(this)
                   .attr("fill", "orange");
@@ -154,16 +155,15 @@
                   .attr("fill", "steelblue");
                  tooltip.style("display", "none");
              })
+             //set the tooltip when mousing over
              .on("mousemove", function(d){
                  tooltip
                    .style("left", d3.event.pageX - 50 + "px")
                    .style("top", d3.event.pageY - 70 + "px")
                    .style("display", "inline-block")
-                   .html(d.values['Survived'] + " Survivors from " + d.values['total'] +
+                   .html(d.values['Survived'] + " Survivors out of " + d.values['total'] +
                          " Passengers" + "<br>" + (d.values['Survived'] / d.values['total']).toFixed(2) * 100 + "% Survival Rate");
             });
-             
-             
             //append the casualty bars to the svg
             svg.append('g')
              .attr("class", "chart")
@@ -171,6 +171,7 @@
              .data(class_count)
              .enter()
              .append('rect')
+             //set the attributes of the bars
              .attr('x', function(d) {
                   return x_scale(d.key);
               })
@@ -185,6 +186,7 @@
               })
              .attr('fill', 'lightblue')
              .attr('stroke', 'black')
+             //set the mouseover functions of the bars
              .on("mouseover", function() {
                  d3.select(this)
                   .attr("fill", "orange");
@@ -194,22 +196,23 @@
                   .attr("fill", "lightblue");
                  tooltip.style("display", "none");
              })
+             //set the tooltip when mousing over
              .on("mousemove", function(d){
                  tooltip
                    .style("left", d3.event.pageX - 50 + "px")
                    .style("top", d3.event.pageY - 70 + "px")
                    .style("display", "inline-block")
-                   .html(d.values['Died'] + " Deaths from " + d.values['total'] +
+                   .html(d.values['Died'] + " Deaths out of " + d.values['total'] +
                          " Passengers" + "<br>" + (d.values['Died'] / d.values['total']).toFixed(2) * 100 + "% Mortality Rate");
              });
-
-
+            //create a legend for the upper left corner
             var legend = svg.append("g")
               .attr("class", "legend")
               .attr("transform", "translate(" + (width - 300) + "," + 20 + ")")
               .selectAll("g")
               .data(["Deaths", "Survivors"])
               .enter().append("g");
+            //append boxes to the legend
             legend.append("rect")
               .attr("y", function(d, i) {
                   return i * 30;
@@ -224,6 +227,7 @@
                   }
               })
               .attr('stroke', 'black');
+            //append text to the legend
             legend.append("text")
               .attr("y", function(d, i) {
                   return i * 30 + 15;
@@ -242,7 +246,6 @@
       d['Survived'] = +d['Survived'];
       return d;
   }, draw);
-  
   </script>
 </body>
 </html>
