@@ -11,6 +11,10 @@
           text-align: center;
           font-family: arial;
         }
+        body { 
+          font-family: arial;
+          text-anchor: left;
+        }
         /* set style for the axis text */
         .axis {
           font-family: arial;
@@ -70,7 +74,7 @@
           //create the header title of the graphic
           d3.select("body")
             .append("h2")
-            .text("The Mortality Rate of Titanic Passengers Varied Greatly by Passenger Class.");
+            .text("The Mortality Rate of Titanic Passengers Varied Greatly with Passenger Class.");
           //create the svg in which the graphic will appear
           var svg = d3.select("body")
             .append("svg")
@@ -78,11 +82,6 @@
             .attr("height", height + margin)
             .append('g')
             .attr('class', 'map');
-          //determine the extent of data we will be using for
-          //passenger class
-          var x_extent = d3.extent(data, function(d) {
-              return d['Pclass'];
-          });
           //scale the passenger class data we have
           //using the extent we created
           var x_scale = d3.scale.ordinal()
@@ -92,6 +91,7 @@
           var x_axis = d3.svg.axis()
                              .scale(x_scale)
                              .orient('bottom');
+
           //append the x axis to the svg
           d3.select("svg")
              .append("g")
@@ -121,6 +121,10 @@
             .attr('class', 'y axis')
             .attr('transform', "translate(" + margin + ",0)")
             .call(y_axis);
+          //add title to the y axis
+          svg.append("text")
+            .attr("transform", "translate("+ (margin/3) +","+(height * .70)+")rotate(-90)")
+            .text("Number of Passengers");
           //create the tooltip variable
           var tooltip = d3.select("body").append("div").attr("class", "toolTip");
           //append the Survivor bars to the svg
