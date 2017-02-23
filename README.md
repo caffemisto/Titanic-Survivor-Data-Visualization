@@ -34,6 +34,8 @@ http://bl.ocks.org/mstanaland/6100713
 
 http://bl.ocks.org/Caged/6476579
 
-Also, the following page was very helpful for ordinal sclaes:
+http://bl.ocks.org/phoebebright/3061203
+
+Also, the following page was very helpful for ordinal scales:
 
 https://jaketrent.com/post/use-d3-rangebands/
