@@ -91,7 +91,6 @@
           var x_axis = d3.svg.axis()
                              .scale(x_scale)
                              .orient('bottom');
-
           //append the x axis to the svg
           d3.select("svg")
              .append("g")
@@ -109,8 +108,7 @@
           //using the extent we created
           var y_scale = d3.scale.linear()
                                 .range([height, margin])
-                                .domain(y_extent);
-                                
+                                .domain(y_extent);                                
           //build the x axis with the appropriate scale
           var y_axis = d3.svg.axis()
                              .scale(y_scale)
@@ -152,7 +150,7 @@
              //set the mouseover functions of the bars
              .on("mouseover", function() {
                  d3.select(this)
-                  .attr("fill", "#F3F781");
+                  .attr("fill", "orange");
              })
              .on("mouseout", function(d, i) {
                  d3.select(this)
